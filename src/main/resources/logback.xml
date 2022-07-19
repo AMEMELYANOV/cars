@@ -53,7 +53,7 @@
 
     </appender>
 
-    <root level="debug">
+    <root level="info">
 <!--        <appender-ref ref="FILE-ROLLING-DEBUG"/>-->
 <!--        <appender-ref ref="FILE-ROLLING-INFO"/>-->
         <appender-ref ref="CONSOLE"/>
