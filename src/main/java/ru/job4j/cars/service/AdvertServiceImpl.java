@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class AdvertServiceImpl implements AdvertService{
+public class AdvertServiceImpl implements AdvertService {
 
     @Value("${upload.path}")
     private String uploadPath;

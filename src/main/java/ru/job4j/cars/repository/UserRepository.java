@@ -35,7 +35,7 @@ public class UserRepository implements UserRep {
     }
 
     @Override
-    public User findUserByUserEmail(String email) {
+    public User findUserByEmail(String email) {
         return this.execute(
                 session -> {
                     Query query = session.createQuery("from User where email = :email");
@@ -66,7 +66,7 @@ public class UserRepository implements UserRep {
     }
 
     @Override
-    public User findUserByUserId(Integer userId) {
+    public User findUserById(Integer userId) {
         return this.execute(
                 session -> {
                     Query query = session.createQuery("from User where id = :userId");

@@ -5,7 +5,7 @@ import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.UserRepository;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
@@ -20,12 +20,12 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User findUserByEmail(String email) {
-        return userRepository.findUserByUserEmail(email);
+        return userRepository.findUserByEmail(email);
     }
 
     @Override
     public User findUserById(Integer userId) {
-        return userRepository.findUserByUserId(userId);
+        return userRepository.findUserById(userId);
     }
 
     @Override

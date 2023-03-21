@@ -37,7 +37,7 @@ class UserRepositoryTest {
     @Test
     void whenUserAdd() {
         userRepository.add(userOne);
-        User rsl = userRepository.findUserByUserEmail("email1");
+        User rsl = userRepository.findUserByEmail("email1");
         List<User> users = userRepository.getAllUsers();
 
         Assertions.assertThat(users).hasSize(1);
@@ -56,7 +56,7 @@ class UserRepositoryTest {
     @Test
     void whenFindUserByEmailSuccess() {
         userRepository.add(userOne);
-        User rsl = userRepository.findUserByUserEmail(userOne.getEmail());
+        User rsl = userRepository.findUserByEmail(userOne.getEmail());
 
         Assertions.assertThat(userOne).isEqualTo(rsl);
     }
@@ -64,7 +64,7 @@ class UserRepositoryTest {
     @Test
     void whenFindUserByEmailFail() {
         userRepository.add(userOne);
-        User rsl = userRepository.findUserByUserEmail(userTwo.getEmail());
+        User rsl = userRepository.findUserByEmail(userTwo.getEmail());
 
         Assertions.assertThat(rsl).isNull();
     }
@@ -72,7 +72,7 @@ class UserRepositoryTest {
     @Test
     void whenFindUserByIdSuccess() {
         User user = userRepository.add(userOne);
-        User rsl = userRepository.findUserByUserId(user.getId());
+        User rsl = userRepository.findUserById(user.getId());
 
         Assertions.assertThat(userOne).isEqualTo(rsl);
     }
@@ -80,7 +80,7 @@ class UserRepositoryTest {
     @Test
     void whenFindUserByIdFail() {
         User user = userRepository.add(userOne);
-        User rsl = userRepository.findUserByUserId(user.getId() + 1);
+        User rsl = userRepository.findUserById(user.getId() + 1);
 
         Assertions.assertThat(rsl).isNull();
     }

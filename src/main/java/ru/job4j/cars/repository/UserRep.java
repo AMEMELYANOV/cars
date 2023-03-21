@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface UserRep {
 
- User findUserByUserEmail(String username);
+ User findUserByEmail(String username);
 
  User add(User user);
 
  User update(User user);
 
- User findUserByUserId(Integer userId);
+ User findUserById(Integer userId);
 
  List<User> getAllUsers();
 }
