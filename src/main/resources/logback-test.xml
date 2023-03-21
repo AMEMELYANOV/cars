@@ -1,0 +1,62 @@
+<configuration>
+
+    <property name="HOME_LOG_DEBUG" value="logs/app_debug.log"/>
+    <property name="HOME_LOG_INFO" value="logs/app_info.log"/>
+
+    <appender name="FILE-ROLLING-DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${HOME_LOG_DEBUG}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/app_debug.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>20GB</totalSizeCap>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+       <encoder>
+            <pattern>%d{ISO8601} %5p %c:%M:%L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-ROLLING-INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${HOME_LOG_INFO}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/app_info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>20GB</totalSizeCap>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{ISO8601} %5p %c:%M:%L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{ISO8601} %5p %c:%M:%L - %m%n
+            </Pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+    </appender>
+
+    <root level="info">
+<!--        <appender-ref ref="FILE-ROLLING-DEBUG"/>-->
+<!--        <appender-ref ref="FILE-ROLLING-INFO"/>-->
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
