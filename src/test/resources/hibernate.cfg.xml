@@ -1,8 +1,8 @@
 <?xml version = "1.0" encoding = "utf-8"?>
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.connection.url">jdbc:hsqldb:mem:cars;sql.enforce_size=false</property>
-        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+        <property name="hibernate.connection.url">jdbc:h2:mem:cars;MODE=PostgreSQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;</property>
+        <property name="hibernate.connection.driver_class">org.h2.Driver</property>
         <property name="hibernate.connection.username">test</property>
         <property name="hibernate.connection.password"></property>
         <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>

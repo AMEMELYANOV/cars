@@ -28,6 +28,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 		log.debug("Starting my application in debug with {} args", args.length);
 		log.info("Starting my application with {} args.", args.length);
+		System.out.println("Go to http://localhost:8080");
 	}
 
 }
