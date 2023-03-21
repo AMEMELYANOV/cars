@@ -1,67 +1,25 @@
 package ru.job4j.cars.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.cars.model.Advert;
-import ru.job4j.cars.repository.AdRepository;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
-@Service
-public class AdvertService {
+public interface AdvertService {
 
-    @Value("${upload.path}")
-    private String uploadPath;
-    private final AdRepository adRepository;
+    List<Advert> findAllAdverts();
 
-    public AdvertService(AdRepository adRepository) {
-        this.adRepository = adRepository;
-    }
+    Advert save(Advert advert, MultipartFile file) throws IOException;
 
-    public List<Advert> findAllAdverts() {
-        return adRepository.findAllAdverts();
-    }
+    Advert findAdvertById(Integer advertId);
 
-    public Advert save(Advert advert, MultipartFile file) throws IOException {
-        if (!file.isEmpty() && !file.getOriginalFilename().isEmpty()) {
-            File uploadDir = new File(uploadPath);
+    List<Advert> findAdvertsByUserId(int id);
 
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
+    void deleteAdvertById(Integer advertId);
 
-            String uuidFile = UUID.randomUUID().toString();
-            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+    Advert update(Advert advert);
 
-            file.transferTo(new File(uploadPath + "/" + resultFilename));
-
-            advert.setFilename(resultFilename);
-        }
-        return advert.getId() == 0 ? adRepository.save(advert) : adRepository.update(advert);
-    }
-
-    public Advert findAdvertById(Integer advertId) {
-        return adRepository.findAdvertById(advertId);
-    }
-
-    public List<Advert> findAdvertsByUserId(int id) {
-        return adRepository.findAdvertsByUserId(id);
-    }
-
-    public void deleteAdvertById(Integer advertId) {
-        adRepository.deleteAdvertById(advertId);
-    }
-
-    public Advert update(Advert advert) {
-        return adRepository.update(advert);
-    }
-
-    public List<Advert> filterAdverts(String bodyType, String transmissionname,
-                                      String drive, String fuel) {
-        return adRepository.filterAdverts(bodyType, transmissionname, drive, fuel);
-    }
+    List<Advert> filterAdverts(String bodyType, String transmissionname,
+                                      String drive, String fuel);
 }

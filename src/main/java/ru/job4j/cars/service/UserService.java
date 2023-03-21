@@ -1,31 +1,14 @@
 package ru.job4j.cars.service;
 
-import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.User;
-import ru.job4j.cars.repository.UserRepository;
 
-@Service
-public class UserService {
+public interface UserService {
 
-    private final UserRepository userRepository;
+    User add(User user);
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    User findUserByEmail(String email);
 
-    public User add(User user) {
-        return userRepository.add(user);
-    }
+    User findUserById(Integer userId);
 
-    public User findUserByEmail(String email) {
-        return userRepository.findUserByUserEmail(email);
-    }
-
-    public User findUserById(Integer userId) {
-        return userRepository.findUserByUserId(userId);
-    }
-
-    public User update(User user) {
-        return userRepository.update(user);
-    }
+    User update(User user);
 }
