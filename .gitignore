@@ -5,3 +5,4 @@ target
 *.gz
 uploads
 TODO.md
+*.db

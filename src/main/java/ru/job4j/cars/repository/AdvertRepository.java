@@ -1,18 +1,16 @@
-package ru.job4j.cars.service;
+package ru.job4j.cars.repository;
 
-import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.cars.model.Advert;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
- * Сервис по работе с объявлениями
+ * Хранилище объявлений
  * @see ru.job4j.cars.model.Advert
  * @author Alexander Emelyanov
  * @version 1.0
  */
-public interface AdvertService {
+public interface AdvertRepository {
 
     /**
      * Выполняет возврат всех объявлений.
@@ -26,10 +24,9 @@ public interface AdvertService {
      * объявления с проинициализированным идентификатором.
      *
      * @param advert объявление
-     * @param file файл изображения
      * @return advert объявление с проинициализированным идентификатором
      */
-    Advert save(Advert advert, MultipartFile file) throws IOException;
+    Advert save(Advert advert);
 
     /**
      * Выполняет поиск и возврат объявления по идентификатору.
@@ -49,10 +46,12 @@ public interface AdvertService {
 
     /**
      * Выполняет удаление объявления по идентификатору.
+     * Если удаление состоялось, вернет true, иначе false.
      *
      * @param advertId идентификатор
+     * @return true, если удаление состоялось, иначе false
      */
-    void deleteAdvertById(Integer advertId);
+    boolean deleteAdvertById(Integer advertId);
 
     /**
      * Выполняет обновление объявления. Возвращает
@@ -74,5 +73,5 @@ public interface AdvertService {
      * @return список объявлений
      */
     List<Advert> filterAdverts(String bodyType, String transmissionname,
-                                      String drive, String fuel);
+                               String drive, String fuel);
 }

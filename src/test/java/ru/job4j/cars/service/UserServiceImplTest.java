@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.job4j.cars.model.User;
+import ru.job4j.cars.repository.HibernateUserRepository;
 import ru.job4j.cars.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +40,7 @@ class UserServiceImplTest {
      */
     @BeforeEach
     public void setup() {
-        userRepository = Mockito.mock(UserRepository.class);
+        userRepository = Mockito.mock(HibernateUserRepository.class);
         userService = new UserServiceImpl(userRepository);
         user = User.of("username", "email", "password", "+79051111111");
     }
@@ -49,11 +50,11 @@ class UserServiceImplTest {
      */
     @Test
     void whenAddUserThenReturnUser() {
-        doReturn(user).when(userRepository).add(user);
+        doReturn(user).when(userRepository).save(user);
 
-        User result = userService.add(user);
+        User result = userService.save(user);
 
-        verify(userRepository).add(user);
+        verify(userRepository).save(user);
         assertThat(result).isEqualTo(user);
     }
 

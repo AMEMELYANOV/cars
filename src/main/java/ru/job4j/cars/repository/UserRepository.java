@@ -1,88 +1,55 @@
 package ru.job4j.cars.repository;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.User;
 
 import java.util.List;
-import java.util.function.Function;
 
-@Repository
-public class UserRepository implements UserRep {
+/**
+ * Хранилище пользователей
+ * @see ru.job4j.cars.model.User
+ * @author Alexander Emelyanov
+ * @version 1.0
+ */
+public interface UserRepository {
 
-    private final SessionFactory sf;
+ /**
+  * Выполняет поиск и возврат пользователя по адресу электронной
+  * почты пользователя.
+  *
+  * @param email адрес электронной почты пользователя
+  * @return user пользователь
+  */
+ User findUserByEmail(String email);
 
-    public UserRepository(SessionFactory sf) {
-        this.sf = sf;
-    }
+ /**
+  * Выполняет сохранение пользователя. Возвращает
+  * пользователя с проинициализированным идентификатором.
+  *
+  * @param user пользователь
+  * @return user пользователь с проинициализированным идентификатором
+  */
+ User save(User user);
 
-    private <T> T execute(final Function<Session, T> command) {
-        final Session session = sf.openSession();
-        final Transaction transaction = session.beginTransaction();
-        try {
-            T rsl = command.apply(session);
-            transaction.commit();
-            return rsl;
-        } catch (final Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
-    }
+ /**
+  * Выполняет обновление и возвращение пользователя.
+  *
+  * @param user пользователь
+  * @return user обновленный пользователь
+  */
+ User update(User user);
 
-    @Override
-    public User findUserByEmail(String email) {
-        return this.execute(
-                session -> {
-                    Query query = session.createQuery("from User where email = :email");
-                    query.setParameter("email", email);
-                    return (User) query.uniqueResult();
-                }
-        );
-    }
+ /**
+  * Выполняет поиск и возврат пользователя идентификатору.
+  *
+  * @param userId идентификатор пользователя
+  * @return user пользователь
+  */
+ User findUserById(Integer userId);
 
-    @Override
-    public User add(User user) {
-        return this.execute(
-                session -> {
-                    session.save(user);
-                    return user;
-                }
-        );
-    }
-
-    @Override
-    public User update(User user) {
-        return this.execute(
-                session -> {
-                    session.update(user);
-                    return user;
-                }
-        );
-    }
-
-    @Override
-    public User findUserById(Integer userId) {
-        return this.execute(
-                session -> {
-                    Query query = session.createQuery("from User where id = :userId");
-                    query.setParameter("userId", userId);
-                    return (User) query.uniqueResult();
-                }
-        );
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return this.execute(
-                session -> {
-                    Query query = session.createQuery("from User", User.class);
-                    return query.list();
-                }
-        );
-    }
+ /**
+  * Выполняет возврат всех пользователей.
+  *
+  * @return список пользователей
+  */
+ List<User> findAllUsers();
 }

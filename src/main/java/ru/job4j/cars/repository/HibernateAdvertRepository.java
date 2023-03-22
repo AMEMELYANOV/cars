@@ -13,15 +13,30 @@ import ru.job4j.cars.model.Advert;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Реализация хранилища объявлений
+ * @see ru.job4j.cars.repository.AdvertRepository
+ * @author Alexander Emelyanov
+ * @version 1.0
+ */
 @Repository
-public class AdRepository implements AdvertRep {
+public class HibernateAdvertRepository implements AdvertRepository {
 
+    /**
+     * Объект для выполнения подключения к базе данных приложения
+     */
     private final SessionFactory sf;
 
-    public AdRepository(SessionFactory sf) {
+    public HibernateAdvertRepository(SessionFactory sf) {
         this.sf = sf;
     }
 
+    /**
+     * Выполняет переданный метод оборачиваю в транзакцию
+     *
+     * @param command выполняемый метод
+     * @return объект результат выполнения переданного метода
+     */
     private <T> T execute(final Function<Session, T> command) {
         final Session session = sf.openSession();
         final Transaction transaction = session.beginTransaction();
@@ -37,6 +52,11 @@ public class AdRepository implements AdvertRep {
         }
     }
 
+    /**
+     * Выполняет возврат всех объявлений.
+     *
+     * @return список объявлений
+     */
     @Override
     public List<Advert> findAllAdverts() {
         return this.execute(session -> session.createQuery(
@@ -47,6 +67,13 @@ public class AdRepository implements AdvertRep {
                 .list());
     }
 
+    /**
+     * Выполняет сохранение объявления. Возвращает
+     * объявления с проинициализированным идентификатором.
+     *
+     * @param advert объявление
+     * @return advert объявление с проинициализированным идентификатором
+     */
     @Override
     public Advert save(Advert advert) {
         return this.execute(
@@ -57,6 +84,12 @@ public class AdRepository implements AdvertRep {
         );
     }
 
+    /**
+     * Выполняет поиск и возврат объявления по идентификатору.
+     *
+     * @param advertId идентификатор
+     * @return advert объявление
+     */
     @Override
     public Advert findAdvertById(Integer advertId) {
         return this.execute(
@@ -68,6 +101,12 @@ public class AdRepository implements AdvertRep {
         );
     }
 
+    /**
+     * Выполняет поиск и возврат объявления по идентификатору пользователя.
+     *
+     * @param id идентификатор
+     * @return advert объявление
+     */
     @Override
     public List<Advert> findAdvertsByUserId(int id) {
         return this.execute(session -> {
@@ -81,6 +120,13 @@ public class AdRepository implements AdvertRep {
         );
     }
 
+    /**
+     * Выполняет удаление объявления по идентификатору.
+     * Если удаление состоялось, вернет true, иначе false.
+     *
+     * @param advertId идентификатор
+     * @return true, если удаление состоялось, иначе false
+     */
     @Override
     public boolean deleteAdvertById(Integer advertId) {
         return this.execute(
@@ -88,6 +134,13 @@ public class AdRepository implements AdvertRep {
                         .setParameter("advertId", advertId).executeUpdate() > 0);
     }
 
+    /**
+     * Выполняет обновление объявления. Возвращает
+     * обновленное объявление.
+     *
+     * @param advert объявление
+     * @return advert обновленное объявление
+     */
     @Override
     public Advert update(Advert advert) {
         return this.execute(
@@ -98,6 +151,17 @@ public class AdRepository implements AdvertRep {
         );
     }
 
+    /**
+     * Выполняет фильтрацию объявлений по переданным параметрам.
+     * Вернет список объявлений соответствующих фильтру.
+     *
+     * @param bodyType тип кузова
+     * @param transmissionname трансмиссия
+     * @param drive тип привода
+     * @param fuel тип топлива
+     * @return список объявлений
+     */
+    @Override
     public List<Advert> filterAdverts(String bodyType, String transmissionname,
                                       String drive, String fuel) {
         return this.execute(session -> {

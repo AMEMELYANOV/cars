@@ -10,15 +10,33 @@ import ru.job4j.cars.service.UserService;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Тест класс реализации контроллеров
+ * @see ru.job4j.cars.controller.RegController
+ * @author Alexander Emelyanov
+ * @version 1.0
+ */
 class RegControllerTest {
+
+    /**
+     * Пользователь
+     */
     private User user;
 
+    /**
+     * Создает необходимые для выполнения тестов общие объекты.
+     * Создание выполняется перед каждым тестом.
+     */
     @BeforeEach
     void setUp() {
         user = User.of("user", "email",
                 "password", "+79051111111");
     }
 
+    /**
+     * Выполняется проверка удачной регистрации пользователя и перенаправление
+     * пользователя на страницу входа.
+     */
     @Test
     void whenRegSaveSuccess() {
         String repassword = "password";
@@ -28,10 +46,15 @@ class RegControllerTest {
         RegController regController = new RegController(userService);
         String template = regController.regSave(user, errors, repassword);
 
-        verify(userService, times(1)).add(user);
+        verify(userService, times(1)).save(user);
         Assertions.assertThat(template).isEqualTo("redirect:/login");
     }
 
+    /**
+     * Выполняется проверка неудачной регистрации пользователя и перенаправление
+     * пользователя на страницу регистрации с параметрами ошибки, что пользователь
+     * существует.
+     */
     @Test
     void whenRegSaveIfUserExist() {
         String repassword = "password";
@@ -42,10 +65,15 @@ class RegControllerTest {
         RegController regController = new RegController(userService);
         String template = regController.regSave(user, errors, repassword);
 
-        verify(userService, times(0)).add(user);
+        verify(userService, times(0)).save(user);
         Assertions.assertThat(template).isEqualTo("redirect:/reg?account=true");
     }
 
+    /**
+     * Выполняется проверка неудачной регистрации пользователя и перенаправление
+     * пользователя на страницу регистрации с параметрами ошибки, что пользователь
+     * ввел повторно неправильный пароль в форме регистрации.
+     */
     @Test
     void whenRegSaveIfPasswordNotEqual() {
         String repassword = "pwd";
@@ -55,10 +83,14 @@ class RegControllerTest {
         RegController regController = new RegController(userService);
         String template = regController.regSave(user, errors, repassword);
 
-        verify(userService, times(0)).add(user);
+        verify(userService, times(0)).save(user);
         Assertions.assertThat(template).isEqualTo("redirect:/reg?password=true");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы регистрации,
+     * параметры ошибок отсутствуют.
+     */
     @Test
     void whenRegPageSuccess() {
         String password = null;
@@ -74,6 +106,10 @@ class RegControllerTest {
         Assertions.assertThat(template).isEqualTo("reg");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы регистрации,
+     * с параметром ошибки неправильного повторения пароля.
+     */
     @Test
     void whenRegPageIfPasswordParameterNotNull() {
         String password = "true";
@@ -89,6 +125,10 @@ class RegControllerTest {
         Assertions.assertThat(template).isEqualTo("reg");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы регистрации,
+     * с параметром ошибки уже зарегистрированного пользователя с такой почтой.
+     */
     @Test
     void whenRegPageIfAccountParameterNotNull() {
         String password = null;

@@ -9,16 +9,32 @@ import ru.job4j.cars.service.UserService;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Тест класс реализации контроллеров
+ * @see ru.job4j.cars.controller.LoginController
+ * @author Alexander Emelyanov
+ * @version 1.0
+ */
 class UserControllerTest {
 
+    /**
+     * Пользователь
+     */
     private User user;
 
+    /**
+     * Создает необходимые для выполнения тестов общие объекты.
+     * Создание выполняется перед каждым тестом.
+     */
     @BeforeEach
     void setUp() {
         user = User.of("user", "email",
                 "password", "+79051111111");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы редактирования профиля пользователя.
+     */
     @Test
     void whenGetEditPageSuccess() {
         String errorMessage = null;
@@ -36,6 +52,10 @@ class UserControllerTest {
         Assertions.assertThat(template).isEqualTo("userEdit");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы редактирования профиля пользователя,
+     * при наличии ошибки ввода паролей.
+     */
     @Test
     void whenGetEditPageFail() {
         String errorMessage = "Неверно введен старый пароль!";
@@ -53,6 +73,10 @@ class UserControllerTest {
         Assertions.assertThat(template).isEqualTo("userEdit");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы списка объявлений,
+     * при удачном обновлении пользователя.
+     */
     @Test
     void whenUserEditSuccess() {
         String oldPassword = "password";
@@ -66,6 +90,10 @@ class UserControllerTest {
         Assertions.assertThat(template).isEqualTo("redirect:/ads");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы редактирования профиля пользователя,
+     * при неудачном обновлении пользователя из-за пароля.
+     */
     @Test
     void whenUserEditFail() {
         String oldPassword = "pwd";

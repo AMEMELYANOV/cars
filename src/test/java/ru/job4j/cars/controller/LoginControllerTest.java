@@ -12,11 +12,28 @@ import javax.servlet.http.HttpSession;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Тест класс реализации контроллеров
+ * @see ru.job4j.cars.controller.LoginController
+ * @author Alexander Emelyanov
+ * @version 1.0
+ */
 class LoginControllerTest {
 
+    /**
+     * Пользователь
+     */
     private User user;
+
+    /**
+     * Пользователь
+     */
     private User userFromDB;
 
+    /**
+     * Создает необходимые для выполнения тестов общие объекты.
+     * Создание выполняется перед каждым тестом.
+     */
     @BeforeEach
     void setUp() {
         user = User.of("user", "email",
@@ -25,8 +42,11 @@ class LoginControllerTest {
                 "pwd", "+79051111111");
     }
 
+    /**
+     * Выполняется проверка загрузки страницы входа.
+     */
     @Test
-    void whenRegLoginSuccess() {
+    void whenRegLogin() {
         String error = null;
         String logout = null;
         String errorMessage = null;
@@ -41,6 +61,10 @@ class LoginControllerTest {
         Assertions.assertThat(template).isEqualTo("login");
     }
 
+    /**
+     * Выполняется проверка загрузки страницы входа, с параметром
+     * error, пароль или логин пользователя введены неверно.
+     */
     @Test
     void whenLoginPageIfPasswordParameterNotNull() {
         String error = "true";
@@ -56,6 +80,10 @@ class LoginControllerTest {
         Assertions.assertThat(template).isEqualTo("login");
     }
 
+    /**
+     * Выполняется проверка загрузки страницы входа, с параметром
+     * logout, пользователь вышел из приложения.
+     */
     @Test
     void whenLoginPageIfAccountParameterNotNull() {
         String error = null;
@@ -71,6 +99,10 @@ class LoginControllerTest {
         Assertions.assertThat(template).isEqualTo("login");
     }
 
+    /**
+     * Выполняется проверка удачного входа пользователя и перенаправление
+     * пользователя на страницу объявлений.
+     */
     @Test
     void whenLoginUserExist() {
         HttpSession session = mock(HttpSession.class);
@@ -87,6 +119,10 @@ class LoginControllerTest {
         Assertions.assertThat(template).isEqualTo("redirect:/ads");
     }
 
+    /**
+     * Выполняется проверка неудачного входа пользователя (логин не найден)
+     * и перенаправление пользователя на страницу входа.
+     */
     @Test
     void whenLoginUserNotExist() {
         UserService userService = mock(UserService.class);
@@ -99,6 +135,10 @@ class LoginControllerTest {
         Assertions.assertThat(template).isEqualTo("redirect:/login?error=true");
     }
 
+    /**
+     * Выполняется проверка неудачного входа пользователя (логин найден,
+     * но пароль не совпал) и перенаправление пользователя на страницу входа.
+     */
     @Test
     void whenLoginUserPasswordNotEqual() {
         UserService userService = mock(UserService.class);
@@ -111,6 +151,10 @@ class LoginControllerTest {
         Assertions.assertThat(template).isEqualTo("redirect:/login?error=true");
     }
 
+    /**
+     * Выполняется проверка выхода пользователя из приложения
+     * с перенаправлением пользователя на страницу входа с параметром выхода.
+     */
     @Test
     void whenLogoutPage() {
         HttpSession session = mock(HttpSession.class);

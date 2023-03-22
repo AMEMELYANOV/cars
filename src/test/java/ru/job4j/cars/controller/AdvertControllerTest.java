@@ -18,10 +18,28 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+/**
+ * Тест класс реализации контроллеров
+ * @see ru.job4j.cars.controller.AdvertController
+ * @author Alexander Emelyanov
+ * @version 1.0
+ */
 class AdvertControllerTest {
+
+    /**
+     * Пользователь
+     */
     private User user;
+
+    /**
+     * Объявление
+     */
     private Advert advert;
 
+    /**
+     * Создает необходимые для выполнения тестов общие объекты.
+     * Создание выполняется перед каждым тестом.
+     */
     @BeforeEach
     void setUp() {
         user = User.of("user", "email",
@@ -37,6 +55,9 @@ class AdvertControllerTest {
         advert.setUser(user);
     }
 
+    /**
+     * Выполняется проверка возвращения страницы приветствия.
+     */
     @Test
     void whenGetGreeting() {
         AdvertService advertService = mock(AdvertService.class);
@@ -47,6 +68,9 @@ class AdvertControllerTest {
         assertThat(template).isEqualTo("index");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы списка объявлений.
+     */
     @Test
     void whenGetAdverts() {
         List<Advert> adverts = new ArrayList<>();
@@ -65,6 +89,9 @@ class AdvertControllerTest {
         assertThat(template).isEqualTo("ads");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы добавления объявления.
+     */
     @Test
     void whenGetAdd() {
         Model model = mock(Model.class);
@@ -80,6 +107,9 @@ class AdvertControllerTest {
         assertThat(template).isEqualTo("add");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы подробных данных объявления
+     */
     @Test
     void whenGetDetailsAdvert() {
         Model model = mock(Model.class);
@@ -98,6 +128,9 @@ class AdvertControllerTest {
         assertThat(template).isEqualTo("details");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы списка пользовательских объявлений.
+     */
     @Test
     void whenGetMyAdverts() {
         List<Advert> adverts = new ArrayList<>();
@@ -117,6 +150,10 @@ class AdvertControllerTest {
         assertThat(template).isEqualTo("myAds");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы списка пользовательских объявлений,
+     * при удачном удалении объявления.
+     */
     @Test
     void whenDeleteMyAdvert() {
         AdvertService advertService = mock(AdvertService.class);
@@ -128,6 +165,9 @@ class AdvertControllerTest {
         assertThat(template).isEqualTo("redirect:/myAds");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы редактирования объявления.
+     */
     @Test
     void whenGetEditAdvert() {
         Model model = mock(Model.class);
@@ -146,6 +186,10 @@ class AdvertControllerTest {
         assertThat(template).isEqualTo("editAds");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы списка пользовательских объявлений,
+     * при удачном редактировании объявления.
+     */
     @Test
     void whenEditAdvert() throws IOException {
         MultipartFile file = mock(MultipartFile.class);
@@ -167,6 +211,10 @@ class AdvertControllerTest {
         assertThat(template).isEqualTo("redirect:/myAds");
     }
 
+    /**
+     * Выполняется проверка возвращения страницы списка объявлений,
+     * при удачном применении фильтров.
+     */
     @Test
     void whenPostFilterAdverts() {
         List<Advert> adverts = new ArrayList<>();
@@ -191,5 +239,4 @@ class AdvertControllerTest {
                 anyString());
         assertThat(template).isEqualTo("ads");
     }
-
 }
