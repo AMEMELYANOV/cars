@@ -165,5 +165,4 @@ class LoginControllerTest {
 
         Assertions.assertThat(template).isEqualTo("redirect:/login?logout=true");
     }
-
 }

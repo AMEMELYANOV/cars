@@ -1,5 +1,6 @@
 package ru.job4j.cars.repository;
 
+import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -16,17 +17,14 @@ import java.util.function.Function;
  * @author Alexander Emelyanov
  * @version 1.0
  */
+@AllArgsConstructor
 @Repository
 public class HibernateUserRepository implements UserRepository {
 
     /**
      * Объект для выполнения подключения к базе данных приложения
      */
-    private final SessionFactory sf;
-
-    public HibernateUserRepository(SessionFactory sf) {
-        this.sf = sf;
-    }
+    private final SessionFactory sessionFactory;
 
     /**
      * Выполняет переданный метод оборачиваю в транзакцию
@@ -35,7 +33,7 @@ public class HibernateUserRepository implements UserRepository {
      * @return объект результат выполнения переданного метода
      */
     private <T> T execute(final Function<Session, T> command) {
-        final Session session = sf.openSession();
+        final Session session = sessionFactory.openSession();
         final Transaction transaction = session.beginTransaction();
         try {
             T rsl = command.apply(session);

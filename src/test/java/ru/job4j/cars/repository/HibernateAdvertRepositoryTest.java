@@ -53,7 +53,7 @@ class HibernateAdvertRepositoryTest {
      * @return объект (фабрика сессий)
      */
     @Bean(destroyMethod = "close")
-    SessionFactory sf() {
+    SessionFactory sessionFactory() {
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure().build();
         return new MetadataSources(registry).buildMetadata().buildSessionFactory();
@@ -65,9 +65,8 @@ class HibernateAdvertRepositoryTest {
      */
     @BeforeEach
     void setUp() {
-        SessionFactory sf = sf();
-        advertRepository = new HibernateAdvertRepository(sf);
-        userRepository = new HibernateUserRepository(sf);
+        advertRepository = new HibernateAdvertRepository(sessionFactory());
+        userRepository = new HibernateUserRepository(sessionFactory());
         advertOne = Advert.of("title1", "description1", true,
                 Car.of("model1",
                         Brand.of("brand1"),

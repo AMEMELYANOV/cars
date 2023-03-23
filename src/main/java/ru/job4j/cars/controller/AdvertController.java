@@ -64,6 +64,7 @@ public class AdvertController {
     /**
      * Обрабатывает GET запрос, возвращает страницу добавления объявления.
      *
+     * @param advert объявление
      * @param model модель
      * @param session сессия пользователя
      * @return страница добавления объявления

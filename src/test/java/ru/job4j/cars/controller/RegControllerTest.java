@@ -143,5 +143,4 @@ class RegControllerTest {
         verify(model).addAttribute("errorMessage", errorMessage);
         Assertions.assertThat(template).isEqualTo("reg");
     }
-
 }

@@ -1,5 +1,6 @@
 package ru.job4j.cars.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.UserRepository;
@@ -10,6 +11,7 @@ import ru.job4j.cars.repository.UserRepository;
  * @author Alexander Emelyanov
  * @version 1.0
  */
+@AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -17,10 +19,6 @@ public class UserServiceImpl implements UserService {
      * Объект для доступа к методам UserRepository
      */
     private final UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     /**
      * Выполняет поиск и возврат пользователя по адресу электронной

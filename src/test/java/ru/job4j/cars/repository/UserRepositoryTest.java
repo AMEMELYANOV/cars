@@ -8,7 +8,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
-import ru.job4j.cars.model.Advert;
 import ru.job4j.cars.model.User;
 
 import java.util.List;
@@ -44,7 +43,7 @@ class UserRepositoryTest {
      * @return объект (фабрика сессий)
      */
     @Bean(destroyMethod = "close")
-    SessionFactory sf() {
+    SessionFactory sessionFactory() {
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure().build();
         return new MetadataSources(registry).buildMetadata().buildSessionFactory();
@@ -56,7 +55,7 @@ class UserRepositoryTest {
      */
     @BeforeEach
     void setUp() {
-        userRepository = new HibernateUserRepository(sf());
+        userRepository = new HibernateUserRepository(sessionFactory());
         userOne = User.of("user1", "email1",
                 "password1", "+79051111111");
         userTwo = User.of("user2", "email2",

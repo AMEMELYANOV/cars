@@ -1,5 +1,6 @@
 package ru.job4j.cars.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,11 @@ public class AdvertServiceImpl implements AdvertService {
      */
     private final AdvertRepository advertRepository;
 
+    /**
+     * Конструктор класса
+     *
+     * @param advertRepository репозиторий объявлений
+     */
     public AdvertServiceImpl(AdvertRepository advertRepository) {
         this.advertRepository = advertRepository;
     }
@@ -55,6 +61,7 @@ public class AdvertServiceImpl implements AdvertService {
      * @param advert объявление
      * @param file файл изображения
      * @return advert объявление с проинициализированным идентификатором
+     * @exception IOException если при сохранении файла изображения произошли ошибки
      */
     @Override
     public Advert save(Advert advert, MultipartFile file) throws IOException {

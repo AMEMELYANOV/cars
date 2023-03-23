@@ -6,3 +6,4 @@ target
 uploads
 TODO.md
 *.db
+logs

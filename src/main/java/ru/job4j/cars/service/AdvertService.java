@@ -28,6 +28,7 @@ public interface AdvertService {
      * @param advert объявление
      * @param file файл изображения
      * @return advert объявление с проинициализированным идентификатором
+     * @exception IOException если при сохранении файла изображения произошли ошибки
      */
     Advert save(Advert advert, MultipartFile file) throws IOException;
 
