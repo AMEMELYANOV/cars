@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.model.*;
 import ru.job4j.cars.service.AdvertService;
 
@@ -37,6 +38,11 @@ class AdvertControllerTest {
     private Advert advert;
 
     /**
+     * Объект DTO пользователя
+     */
+    private UserReadDto userDto;
+
+    /**
      * Создает необходимые для выполнения тестов общие объекты.
      * Создание выполняется перед каждым тестом.
      */
@@ -53,6 +59,13 @@ class AdvertControllerTest {
                         1, 1),
                 1, "city1");
         advert.setUser(user);
+        userDto = UserReadDto.builder()
+                .active(true)
+                .email("email")
+                .id(1)
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
     }
 
     /**
@@ -138,13 +151,13 @@ class AdvertControllerTest {
         HttpSession session = mock(HttpSession.class);
         AdvertService advertService = mock(AdvertService.class);
 
-        doReturn(user).when(session).getAttribute("user");
+        doReturn(userDto).when(session).getAttribute("user");
         doReturn(adverts).when(advertService).findAdvertsByUserId(anyInt());
 
         AdvertController advertController = new AdvertController(advertService);
         String template = advertController.getMyAds(model, session);
 
-        verify(model).addAttribute("user", user);
+        verify(model).addAttribute("user", userDto);
         verify(model).addAttribute("adverts", adverts);
         verify(advertService, times(1)).findAdvertsByUserId(anyInt());
         assertThat(template).isEqualTo("myAds");
@@ -199,15 +212,15 @@ class AdvertControllerTest {
         AdvertService advertService = mock(AdvertService.class);
 
         doReturn(session).when(request).getSession();
-        doReturn(user).when(session).getAttribute("user");
+        doReturn(userDto).when(session).getAttribute("user");
 
         AdvertController advertController = new AdvertController(advertService);
         String template = advertController.editAds(model, advert,
                file, request);
 
-        verify(model).addAttribute("user", user);
+        verify(model).addAttribute("user", userDto);
         verify(advertService, times(1)).save(any(Advert.class),
-                any(MultipartFile.class));
+                any(MultipartFile.class), any(UserReadDto.class));
         assertThat(template).isEqualTo("redirect:/myAds");
     }
 

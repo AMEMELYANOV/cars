@@ -1,11 +1,14 @@
 package ru.job4j.cars.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.model.Advert;
+import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.AdvertRepository;
+import ru.job4j.cars.repository.UserRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +21,7 @@ import java.util.UUID;
  * @author Alexander Emelyanov
  * @version 1.0
  */
+@RequiredArgsConstructor
 @Service
 public class AdvertServiceImpl implements AdvertService {
 
@@ -34,13 +38,9 @@ public class AdvertServiceImpl implements AdvertService {
     private final AdvertRepository advertRepository;
 
     /**
-     * Конструктор класса
-     *
-     * @param advertRepository репозиторий объявлений
+     * Объект для доступа к методам UserRepository
      */
-    public AdvertServiceImpl(AdvertRepository advertRepository) {
-        this.advertRepository = advertRepository;
-    }
+    private final UserRepository userRepository;
 
     /**
      * Выполняет возврат всех объявлений.
@@ -60,11 +60,14 @@ public class AdvertServiceImpl implements AdvertService {
      *
      * @param advert объявление
      * @param file файл изображения
+     * @param userDto объект DTO пользователя
      * @return advert объявление с проинициализированным идентификатором
      * @exception IOException если при сохранении файла изображения произошли ошибки
      */
     @Override
-    public Advert save(Advert advert, MultipartFile file) throws IOException {
+    public Advert save(Advert advert, MultipartFile file, UserReadDto userDto) throws IOException {
+        User userFromDB = userRepository.findUserByEmail(userDto.getEmail());
+        advert.setUser(userFromDB);
         if (!file.isEmpty() && !file.getOriginalFilename().isEmpty()) {
             File uploadDir = new File(uploadPath);
 

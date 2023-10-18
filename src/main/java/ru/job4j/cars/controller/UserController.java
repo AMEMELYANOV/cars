@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.job4j.cars.model.User;
+import ru.job4j.cars.dto.UserCreateEditDto;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.service.UserService;
 
 /**
  * Контроллер пользователя
+ *
  * @author Alexander Emelyanov
  * @version 1.0
  */
@@ -31,8 +33,8 @@ public class UserController {
      * В зависимости от параметра password на страницу будут выведены
      * сообщения для пользователя о необходимости исправить вводимые данные.
      *
-     * @param userId идентификатор пользователя
-     * @param model модель
+     * @param userId   идентификатор пользователя
+     * @param model    модель
      * @param password параметр GET запроса, true, если есть ошибка валидации пароля
      * @return страница редактирования пользователя
      */
@@ -44,8 +46,8 @@ public class UserController {
             errorMessage = "Неверно введен старый пароль!";
         }
         model.addAttribute("errorMessage", errorMessage);
-        User user = userService.findUserById(userId);
-        model.addAttribute("user", user);
+        UserReadDto userDto = userService.findUserById(userId);
+        model.addAttribute("user", userDto);
 
         log.info("Method {} run", "getEdit");
         return "userEdit";
@@ -57,20 +59,22 @@ public class UserController {
      * при неудачной валидации выполняется переадресация
      * на страницу редактирования пользователя с соответствующими параметрами.
      *
-     * @param user пользователь сформированный из данных формы редактирования
+     * @param userDto     объект DTO пользователя сформированный из данных формы редактирования
      * @param oldPassword старый пароль пользователя
      * @return перенаправление на страницу объявлений
      */
     @PostMapping("/userEdit")
-    public String userEdit(@ModelAttribute User user,
-                           @RequestParam(value = "oldPassword") String oldPassword) {
-        User userFromDB = userService.findUserById(user.getId());
-        if (oldPassword != null && oldPassword.equals(userFromDB.getPassword())) {
-            userService.update(user);
+    public String userEdit(
+            @RequestParam(value = "oldPassword") String oldPassword,
+            @ModelAttribute UserCreateEditDto userDto
+    ) {
+        UserReadDto userDtoFromDB = userService.findUserByEmail(userDto.getEmail());
+        if (oldPassword != null && oldPassword.equals(userDtoFromDB.getPassword())) {
+            userService.update(userDto);
             return "redirect:/ads";
         }
 
         log.info("Method {} run", "userEdit");
-        return "redirect:/userEdit?userId=" + user.getId() + "&password=true";
+        return "redirect:/userEdit?userId=" + userDtoFromDB.getId() + "&password=true";
     }
 }

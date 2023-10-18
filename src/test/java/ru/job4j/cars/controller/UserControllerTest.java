@@ -4,7 +4,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
-import ru.job4j.cars.model.User;
+import ru.job4j.cars.dto.UserCreateEditDto;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.service.UserService;
 
 import static org.mockito.Mockito.*;
@@ -18,9 +19,14 @@ import static org.mockito.Mockito.*;
 class UserControllerTest {
 
     /**
-     * Пользователь
+     * Объект DTO пользователя
      */
-    private User user;
+    private UserCreateEditDto userCreateEditDto;
+
+    /**
+     * Объект DTO пользователя
+     */
+    private UserReadDto userReadDto;
 
     /**
      * Создает необходимые для выполнения тестов общие объекты.
@@ -28,8 +34,18 @@ class UserControllerTest {
      */
     @BeforeEach
     void setUp() {
-        user = User.of("user", "email",
-                "password", "+79051111111");
+        userCreateEditDto = UserCreateEditDto.builder()
+                .email("email")
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
+        userReadDto = UserReadDto.builder()
+                .active(true)
+                .email("email")
+                .id(1)
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
     }
 
     /**
@@ -42,13 +58,13 @@ class UserControllerTest {
         int id = 1;
         Model model = mock(Model.class);
         UserService userService = mock(UserService.class);
-        doReturn(user).when(userService).findUserById(id);
+        doReturn(userReadDto).when(userService).findUserById(id);
 
         UserController userController = new UserController(userService);
         String template = userController.getEdit(id, model, password);
 
         verify(model).addAttribute("errorMessage", errorMessage);
-        verify(model).addAttribute("user", user);
+        verify(model).addAttribute("user", userReadDto);
         Assertions.assertThat(template).isEqualTo("userEdit");
     }
 
@@ -63,13 +79,13 @@ class UserControllerTest {
         int id = 1;
         Model model = mock(Model.class);
         UserService userService = mock(UserService.class);
-        doReturn(user).when(userService).findUserById(id);
+        doReturn(userReadDto).when(userService).findUserById(id);
 
         UserController userController = new UserController(userService);
         String template = userController.getEdit(id, model, password);
 
         verify(model).addAttribute("errorMessage", errorMessage);
-        verify(model).addAttribute("user", user);
+        verify(model).addAttribute("user", userReadDto);
         Assertions.assertThat(template).isEqualTo("userEdit");
     }
 
@@ -79,14 +95,14 @@ class UserControllerTest {
      */
     @Test
     void whenUserEditSuccess() {
-        String oldPassword = "password";
+        String oldPassword = "pass";
         UserService userService = mock(UserService.class);
-        doReturn(user).when(userService).findUserById(user.getId());
+        doReturn(userReadDto).when(userService).findUserByEmail(userCreateEditDto.getEmail());
 
         UserController userController = new UserController(userService);
-        String template = userController.userEdit(user, oldPassword);
+        String template = userController.userEdit(oldPassword, userCreateEditDto);
 
-        verify(userService, times(1)).update(user);
+        verify(userService, times(1)).update(userCreateEditDto);
         Assertions.assertThat(template).isEqualTo("redirect:/ads");
     }
 
@@ -98,13 +114,13 @@ class UserControllerTest {
     void whenUserEditFail() {
         String oldPassword = "pwd";
         UserService userService = mock(UserService.class);
-        doReturn(user).when(userService).findUserById(user.getId());
+        doReturn(userReadDto).when(userService).findUserByEmail(userCreateEditDto.getEmail());
 
         UserController userController = new UserController(userService);
-        String template = userController.userEdit(user, oldPassword);
+        String template = userController.userEdit(oldPassword, userCreateEditDto);
 
-        verify(userService, times(0)).update(user);
+        verify(userService, times(0)).update(userCreateEditDto);
         Assertions.assertThat(template)
-                .isEqualTo("redirect:/userEdit?userId=" + user.getId() + "&password=true");
+                .isEqualTo("redirect:/userEdit?userId=" + userReadDto.getId() + "&password=true");
     }
 }

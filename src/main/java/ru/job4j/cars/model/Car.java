@@ -35,6 +35,7 @@ public class Car {
     /**
      * Год выпуска автомобиля
      */
+    @Column(name = "made_year")
     private int year;
 
     /**

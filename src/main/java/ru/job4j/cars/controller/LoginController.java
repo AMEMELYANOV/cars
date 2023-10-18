@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.cars.model.User;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,16 +59,16 @@ public class LoginController {
      * в аттрибуты сессии, при неудачной валидации выполняется переадресация
      * на страницу входа с параметром error=true.
      *
-     * @param user параметр GET запроса, true, если есть ошибка при заполнении формы
+     * @param userDto объект DTO пользователя
      * @param request запрос пользователя
      * @return список задач
      */
     @PostMapping("/login")
-    public String loginUser(@ModelAttribute User user, HttpServletRequest request) {
-        User userFromDB = userService.findUserByEmail(user.getEmail());
-        if (userFromDB != null && userFromDB.getPassword().equals(user.getPassword())) {
+    public String loginUser(@ModelAttribute UserReadDto userDto, HttpServletRequest request) {
+        UserReadDto userDtoFromDB = userService.findUserByEmail(userDto.getEmail());
+        if (userDtoFromDB != null && userDtoFromDB.getPassword().equals(userDto.getPassword())) {
             HttpSession session = request.getSession();
-            session.setAttribute("user", userFromDB);
+            session.setAttribute("user", userDtoFromDB);
             return "redirect:/ads";
         }
 

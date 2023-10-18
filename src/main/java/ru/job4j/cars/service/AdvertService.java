@@ -1,6 +1,7 @@
 package ru.job4j.cars.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.model.Advert;
 
 import java.io.IOException;
@@ -27,10 +28,11 @@ public interface AdvertService {
      *
      * @param advert объявление
      * @param file файл изображения
+     * @param userDto объект DTO пользователя
      * @return advert объявление с проинициализированным идентификатором
      * @exception IOException если при сохранении файла изображения произошли ошибки
      */
-    Advert save(Advert advert, MultipartFile file) throws IOException;
+    Advert save(Advert advert, MultipartFile file, UserReadDto userDto) throws IOException;
 
     /**
      * Выполняет поиск и возврат объявления по идентификатору.

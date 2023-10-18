@@ -1,6 +1,7 @@
 package ru.job4j.cars.service;
 
-import ru.job4j.cars.model.User;
+import ru.job4j.cars.dto.UserCreateEditDto;
+import ru.job4j.cars.dto.UserReadDto;
 
 /**
  * Реализация сервиса по работе с пользователями
@@ -15,32 +16,32 @@ public interface UserService {
      * почты пользователя.
      *
      * @param email адрес электронной почты пользователя
-     * @return user пользователь
+     * @return DTO объект пользователя
      */
-    User findUserByEmail(String email);
+    UserReadDto findUserByEmail(String email);
 
     /**
      * Выполняет сохранение пользователя. Возвращает
      * пользователя с проинициализированным идентификатором.
      *
-     * @param user пользователь
+     * @param userDto пользователь
      * @return user пользователь с проинициализированным идентификатором
      */
-    User save(User user);
+    UserReadDto save(UserCreateEditDto userDto);
 
     /**
      * Выполняет обновление и возвращение пользователя.
      *
-     * @param user пользователь
-     * @return user обновленный пользователь
+     * @param userDto пользователь
+     * @return DTO объект обновленного пользователя
      */
-    User update(User user);
+    UserReadDto update(UserCreateEditDto userDto);
 
     /**
      * Выполняет поиск и возврат пользователя идентификатору.
      *
      * @param userId идентификатор пользователя
-     * @return user пользователь
+     * @return DTO объект пользователя
      */
-    User findUserById(Integer userId);
+    UserReadDto findUserById(Integer userId);
 }

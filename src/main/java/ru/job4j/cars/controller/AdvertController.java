@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.model.Advert;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.service.AdvertService;
@@ -107,9 +108,9 @@ public class AdvertController {
      */
     @GetMapping("/myAds")
     public String getMyAds(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        List<Advert> adverts = advertService.findAdvertsByUserId(user.getId());
-        model.addAttribute("user", user);
+        UserReadDto userDto = (UserReadDto) session.getAttribute("user");
+        List<Advert> adverts = advertService.findAdvertsByUserId(userDto.getId());
+        model.addAttribute("user", userDto);
         model.addAttribute("adverts", adverts);
 
         log.info("Method {} run", "getMyAds");
@@ -169,11 +170,10 @@ public class AdvertController {
                           @ModelAttribute Advert advert,
                           @RequestParam("file") MultipartFile file,
                           HttpServletRequest request) throws IOException {
-        HttpSession sc = request.getSession();
-        User user = (User) sc.getAttribute("user");
-        model.addAttribute("user", user);
-        advert.setUser(user);
-        advertService.save(advert, file);
+        HttpSession session = request.getSession();
+        UserReadDto userDto = (UserReadDto) session.getAttribute("user");
+        model.addAttribute("user", userDto);
+        advertService.save(advert, file, userDto);
 
         log.info("Method {} run", "editAds");
         return "redirect:/myAds";

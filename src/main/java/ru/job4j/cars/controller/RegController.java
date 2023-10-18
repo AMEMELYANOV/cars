@@ -6,7 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.cars.model.User;
+import ru.job4j.cars.dto.UserCreateEditDto;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.service.UserService;
 
 import javax.validation.Valid;
@@ -60,37 +61,36 @@ public class RegController {
      * при неудачной валидации выполняется переадресация на страницу регистрации
      * с параметрами account=true или password=true.
      *
-     * @param user пользователь сформированный из данных формы регистрации
+     * @param userDto объект DTO пользователя сформированный из данных формы регистрации
      * @param errors список ошибок полученных при валидации модели пользователя
      * @param repassword повторно набранный пароль
      * @return страница входа пользователя
      */
     @PostMapping
-    public String regSave(@Valid @ModelAttribute User user, Errors errors,
+    public String regSave(@Valid @ModelAttribute UserCreateEditDto userDto, Errors errors,
                           @RequestParam String repassword) {
         if (errors.hasErrors()) {
             return "reg";
         }
-        User userFromDB = userService.findUserByEmail(user.getEmail());
-        if (userFromDB != null) {
+        UserReadDto userDtoFromDB = userService.findUserByEmail(userDto.getEmail());
+        if (userDtoFromDB != null) {
             return "redirect:/reg?account=true";
         }
-        if (!user.getPassword().equals(repassword)) {
+        if (!userDto.getPassword().equals(repassword)) {
             return "redirect:/reg?password=true";
         }
-        user.setActive(true);
-        userService.save(user);
+        userService.save(userDto);
 
         log.info("Method {} run", "regSave");
         return "redirect:/login";
     }
 
     /**
-     * Добавляет нового пустого пользователя в модель.
+     * Добавляет новой пустой объект DTO пользователя в модель.
      * @return пользователь
      */
-    @ModelAttribute
-    public User user() {
-        return new User();
+    @ModelAttribute(value = "user")
+    public UserReadDto user() {
+        return new UserReadDto();
     }
 }

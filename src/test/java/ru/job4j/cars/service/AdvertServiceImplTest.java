@@ -5,9 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.model.*;
 import ru.job4j.cars.repository.AdvertRepository;
 import ru.job4j.cars.repository.HibernateAdvertRepository;
+import ru.job4j.cars.repository.HibernateUserRepository;
+import ru.job4j.cars.repository.UserRepository;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -30,6 +33,11 @@ class AdvertServiceImplTest {
     private AdvertRepository advertRepository;
 
     /**
+     Моск объекта UserRepository
+     */
+    private UserRepository userRepository;
+
+    /**
      * Объект для доступа к методам AdvertService
      */
     private AdvertService advertService;
@@ -40,13 +48,19 @@ class AdvertServiceImplTest {
     private Advert advert;
 
     /**
+     * Объект DTO пользователя
+     */
+    private UserReadDto userDto;
+
+    /**
      * Создает необходимые для выполнения тестов общие объекты.
      * Создание выполняется перед каждым тестом.
      */
     @BeforeEach
     public void setup() {
         advertRepository = Mockito.mock(HibernateAdvertRepository.class);
-        advertService = new AdvertServiceImpl(advertRepository);
+        userRepository = Mockito.mock(HibernateUserRepository.class);
+        advertService = new AdvertServiceImpl(advertRepository, userRepository);
         advert = Advert.of("title",
                 "description",
                 true,
@@ -54,6 +68,13 @@ class AdvertServiceImplTest {
                         Engine.of(2000.0, 150, "fuel"),
                         Transmission.of("transmission"), 2010, 100000),
                 1000000, "city");
+        userDto = UserReadDto.builder()
+                .active(true)
+                .email("email")
+                .id(1)
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
         advert.setUser(User.of("username", "email", "password", "+79051111111"));
     }
 
@@ -95,7 +116,7 @@ class AdvertServiceImplTest {
         doReturn(advert).when(advertRepository).update(advert);
         doReturn(true).when(file).isEmpty();
 
-        Advert result = advertService.save(advert, file);
+        Advert result = advertService.save(advert, file, userDto);
 
         verify(advertRepository).update(advert);
         Assertions.assertThat(result).isEqualTo(advert);
@@ -111,7 +132,7 @@ class AdvertServiceImplTest {
         doReturn(advert).when(advertRepository).save(advert);
         doReturn(true).when(file).isEmpty();
 
-        Advert result = advertService.save(advert, file);
+        Advert result = advertService.save(advert, file, userDto);
 
         verify(advertRepository).save(advert);
         Assertions.assertThat(result).isEqualTo(advert);

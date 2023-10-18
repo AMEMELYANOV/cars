@@ -5,7 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import ru.job4j.cars.model.User;
+import ru.job4j.cars.dto.UserCreateEditDto;
+import ru.job4j.cars.dto.UserReadDto;
 import ru.job4j.cars.service.UserService;
 
 import static org.mockito.Mockito.*;
@@ -19,9 +20,14 @@ import static org.mockito.Mockito.*;
 class RegControllerTest {
 
     /**
-     * Пользователь
+     * Объект DTO пользователя
      */
-    private User user;
+    private UserCreateEditDto userCreateEditDto;
+
+    /**
+     * Объект DTO пользователя
+     */
+    private UserReadDto userReadDto;
 
     /**
      * Создает необходимые для выполнения тестов общие объекты.
@@ -29,8 +35,18 @@ class RegControllerTest {
      */
     @BeforeEach
     void setUp() {
-        user = User.of("user", "email",
-                "password", "+79051111111");
+        userCreateEditDto = UserCreateEditDto.builder()
+                .email("email")
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
+        userReadDto = UserReadDto.builder()
+                .active(true)
+                .email("email")
+                .id(1)
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
     }
 
     /**
@@ -39,14 +55,15 @@ class RegControllerTest {
      */
     @Test
     void whenRegSaveSuccess() {
-        String repassword = "password";
+        String repassword = "pass";
         UserService userService = mock(UserService.class);
         Errors errors = mock(Errors.class);
+        doReturn(null).when(userService).findUserByEmail(userCreateEditDto.getEmail());
 
         RegController regController = new RegController(userService);
-        String template = regController.regSave(user, errors, repassword);
+        String template = regController.regSave(userCreateEditDto, errors, repassword);
 
-        verify(userService, times(1)).save(user);
+        verify(userService, times(1)).save(userCreateEditDto);
         Assertions.assertThat(template).isEqualTo("redirect:/login");
     }
 
@@ -57,15 +74,15 @@ class RegControllerTest {
      */
     @Test
     void whenRegSaveIfUserExist() {
-        String repassword = "password";
+        String repassword = "pass";
         UserService userService = mock(UserService.class);
         Errors errors = mock(Errors.class);
-        doReturn(new User()).when(userService).findUserByEmail(user.getEmail());
+        doReturn(userReadDto).when(userService).findUserByEmail(userCreateEditDto.getEmail());
 
         RegController regController = new RegController(userService);
-        String template = regController.regSave(user, errors, repassword);
+        String template = regController.regSave(userCreateEditDto, errors, repassword);
 
-        verify(userService, times(0)).save(user);
+        verify(userService, times(0)).save(userCreateEditDto);
         Assertions.assertThat(template).isEqualTo("redirect:/reg?account=true");
     }
 
@@ -81,9 +98,9 @@ class RegControllerTest {
         Errors errors = mock(Errors.class);
 
         RegController regController = new RegController(userService);
-        String template = regController.regSave(user, errors, repassword);
+        String template = regController.regSave(userCreateEditDto, errors, repassword);
 
-        verify(userService, times(0)).save(user);
+        verify(userService, times(0)).save(userCreateEditDto);
         Assertions.assertThat(template).isEqualTo("redirect:/reg?password=true");
     }
 

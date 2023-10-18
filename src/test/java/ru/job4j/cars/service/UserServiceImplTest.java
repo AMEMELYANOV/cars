@@ -3,6 +3,9 @@ package ru.job4j.cars.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import ru.job4j.cars.dto.UserCreateEditDto;
+import ru.job4j.cars.dto.UserReadDto;
+import ru.job4j.cars.mapper.UserMapper;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.HibernateUserRepository;
 import ru.job4j.cars.repository.UserRepository;
@@ -30,9 +33,24 @@ class UserServiceImplTest {
     private UserService userService;
 
     /**
+     * Объект для доступа к методам UserMapper
+     */
+    private UserMapper userMapper;
+
+    /**
      * Пользователь
      */
     private User user;
+
+    /**
+     * Объект DTO пользователя
+     */
+    private UserCreateEditDto userCreateEditDto;
+
+    /**
+     * Объект DTO пользователя
+     */
+    private UserReadDto userReadDto;
 
     /**
      * Создает необходимые для выполнения тестов общие объекты.
@@ -41,8 +59,21 @@ class UserServiceImplTest {
     @BeforeEach
     public void setup() {
         userRepository = Mockito.mock(HibernateUserRepository.class);
-        userService = new UserServiceImpl(userRepository);
-        user = User.of("username", "email", "password", "+79051111111");
+        userMapper = Mockito.mock(UserMapper.class);
+        userService = new UserServiceImpl(userRepository, userMapper);
+        user = User.of("username", "email", "pass", "+9077777777");
+        userCreateEditDto = UserCreateEditDto.builder()
+                .username("username")
+                .email("email")
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
+        userReadDto = UserReadDto.builder()
+                .active(true)
+                .email("email")
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
     }
 
     /**
@@ -50,12 +81,17 @@ class UserServiceImplTest {
      */
     @Test
     void whenAddUserThenReturnUser() {
+        user.setActive(true);
         doReturn(user).when(userRepository).save(user);
+        doReturn(user).when(userMapper).getUserFromUserCreateEditDto(userCreateEditDto);
+        doReturn(userReadDto).when(userMapper).getUserReadDtoFromUser(user);
 
-        User result = userService.save(user);
+        UserReadDto result = userService.save(userCreateEditDto);
 
         verify(userRepository).save(user);
-        assertThat(result).isEqualTo(user);
+        verify(userMapper).getUserFromUserCreateEditDto(userCreateEditDto);
+        verify(userMapper).getUserReadDtoFromUser(user);
+        assertThat(result).isEqualTo(userReadDto);
     }
 
     /**
@@ -65,11 +101,13 @@ class UserServiceImplTest {
     @Test
     void whenFindUserByEmailThenReturnUser() {
         doReturn(user).when(userRepository).findUserByEmail(user.getEmail());
+        doReturn(userReadDto).when(userMapper).getUserReadDtoFromUser(user);
 
-        User result = userService.findUserByEmail(user.getEmail());
+        UserReadDto result = userService.findUserByEmail(user.getEmail());
 
         verify(userRepository).findUserByEmail(user.getEmail());
-        assertThat(result).isEqualTo(user);
+        verify(userMapper).getUserReadDtoFromUser(user);
+        assertThat(result).isEqualTo(userReadDto);
     }
 
     /**
@@ -79,11 +117,13 @@ class UserServiceImplTest {
     @Test
     void whenFindUserByIdThenReturnUser() {
         doReturn(user).when(userRepository).findUserById(user.getId());
+        doReturn(userReadDto).when(userMapper).getUserReadDtoFromUser(user);
 
-        User result = userService.findUserById(user.getId());
+        UserReadDto result = userService.findUserById(user.getId());
 
         verify(userRepository).findUserById(user.getId());
-        assertThat(result).isEqualTo(user);
+        verify(userMapper).getUserReadDtoFromUser(user);
+        assertThat(result).isEqualTo(userReadDto);
     }
 
     /**
@@ -91,11 +131,16 @@ class UserServiceImplTest {
      */
     @Test
     void whenUpdateUserThenReturnUser() {
+        doReturn(user).when(userRepository).findUserByEmail(user.getEmail());
         doReturn(user).when(userRepository).update(user);
+        doReturn(user).when(userMapper).updateUserFromUserCreateEditDto(userCreateEditDto, user);
+        doReturn(userReadDto).when(userMapper).getUserReadDtoFromUser(user);
 
-        User result = userService.update(user);
+        UserReadDto result = userService.update(userCreateEditDto);
 
+        verify(userRepository).findUserByEmail(user.getEmail());
         verify(userRepository).update(user);
-        assertThat(result).isEqualTo(user);
+        verify(userMapper).updateUserFromUserCreateEditDto(userCreateEditDto, user);
+        assertThat(result).isEqualTo(userReadDto);
     }
 }

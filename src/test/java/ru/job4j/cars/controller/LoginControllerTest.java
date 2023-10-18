@@ -4,7 +4,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
-import ru.job4j.cars.model.*;
+import ru.job4j.cars.dto.UserReadDto;
+import ru.job4j.cars.model.User;
 import ru.job4j.cars.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +22,9 @@ import static org.mockito.Mockito.*;
 class LoginControllerTest {
 
     /**
-     * Пользователь
+     * Объект DTO пользователя
      */
-    private User user;
+    private UserReadDto userDto;
 
     /**
      * Пользователь
@@ -36,8 +37,13 @@ class LoginControllerTest {
      */
     @BeforeEach
     void setUp() {
-        user = User.of("user", "email",
-                "password", "+79051111111");
+        userDto = UserReadDto.builder()
+                .active(true)
+                .email("email")
+                .id(1)
+                .password("pass")
+                .phonenumber("+9077777777")
+                .build();
         userFromDB = User.of("user", "email",
                 "pwd", "+79051111111");
     }
@@ -109,13 +115,13 @@ class LoginControllerTest {
         UserService userService = mock(UserService.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        doReturn(user).when(userService).findUserByEmail(user.getEmail());
+        doReturn(userDto).when(userService).findUserByEmail(userDto.getEmail());
         doReturn(session).when(request).getSession();
 
         LoginController loginController = new LoginController(userService);
-        String template = loginController.loginUser(user, request);
+        String template = loginController.loginUser(userDto, request);
 
-        verify(session).setAttribute("user", user);
+        verify(session).setAttribute("user", userDto);
         Assertions.assertThat(template).isEqualTo("redirect:/ads");
     }
 
@@ -127,10 +133,10 @@ class LoginControllerTest {
     void whenLoginUserNotExist() {
         UserService userService = mock(UserService.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        doReturn(null).when(userService).findUserByEmail(user.getEmail());
+        doReturn(null).when(userService).findUserByEmail(userDto.getEmail());
 
         LoginController loginController = new LoginController(userService);
-        String template = loginController.loginUser(user, request);
+        String template = loginController.loginUser(userDto, request);
 
         Assertions.assertThat(template).isEqualTo("redirect:/login?error=true");
     }
@@ -141,12 +147,15 @@ class LoginControllerTest {
      */
     @Test
     void whenLoginUserPasswordNotEqual() {
+        UserReadDto userReadDtoFromDB = UserReadDto.builder()
+                .password("password")
+                .build();
         UserService userService = mock(UserService.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        doReturn(userFromDB).when(userService).findUserByEmail(user.getEmail());
+        doReturn(userReadDtoFromDB).when(userService).findUserByEmail(userDto.getEmail());
 
         LoginController loginController = new LoginController(userService);
-        String template = loginController.loginUser(user, request);
+        String template = loginController.loginUser(userDto, request);
 
         Assertions.assertThat(template).isEqualTo("redirect:/login?error=true");
     }
